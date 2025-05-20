@@ -30,6 +30,7 @@ templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 UPLOAD_DIR = Path("static/uploads")
+UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 # Carga el modelo YOLO (ajusta la ruta si es necesario)
 model = YOLO("models/best.pt")
