@@ -31,8 +31,8 @@ Este proyecto es una aplicación web construida con FastAPI que permite subir im
 1. Clona el repositorio:
 
 ```bash
-git clone https://github.com/tu_usuario/nombre-del-repo.git
-cd nombre-del-repo
+git clone https://github.com/IngBenichi/infraestructure-crack-analysis.git
+cd infraestructure-crack-analysis
 ````
 
 2. Crea y activa un entorno virtual (opcional pero recomendado):
