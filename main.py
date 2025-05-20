@@ -1,6 +1,5 @@
 from fastapi import FastAPI, File, UploadFile
 from fastapi.responses import HTMLResponse
-from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from pathlib import Path
 from PIL import Image
@@ -27,10 +26,6 @@ cloudinary.config(
 app = FastAPI()
 
 templates = Jinja2Templates(directory="templates")
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
-UPLOAD_DIR = Path("static/uploads")
-UPLOAD_DIR.mkdir(parents=True, exist_ok=True)
 
 # Carga el modelo YOLO (ajusta la ruta si es necesario)
 model = YOLO("models/best.pt")
@@ -59,16 +54,17 @@ async def home(request: Request):
 async def analyze_image(file: UploadFile = File(...)):
     img_bytes = await file.read()
     img = Image.open(io.BytesIO(img_bytes))
-    img_path = UPLOAD_DIR / f"{uuid.uuid4().hex}.jpg"
+    img_path = f"{uuid.uuid4().hex}.jpg"
     img.save(img_path)
 
     # Análisis con YOLO
-    annotated_path, cracks_detected = analyze_cracks_with_yolo(str(img_path))
-
-    # Generar reporte PDF
+    annotated_path, cracks_detected = analyze_cracks_with_yolo(img_path)
 
     # Subir imagen anotada y pdf a Cloudinary
     image_url = upload_file_to_cloudinary(annotated_path, resource_type="image")
+    
+    os.remove(img_path)
+    os.remove(annotated_path)
 
     return {
         "annotated_image_url": image_url,
